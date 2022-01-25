@@ -16,6 +16,13 @@ class CrudController extends Controller
         return response()->json($data);
     }
 
+    public function all()
+    {
+        $data = Company::orderBy('id', 'desc')->get();
+
+        return response()->json($data);
+    }
+
     public function store(Request $request)
     {
 
