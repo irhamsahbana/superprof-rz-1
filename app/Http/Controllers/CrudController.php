@@ -43,6 +43,27 @@ class CrudController extends Controller
         return Response()->json($company);
     }
 
+    public function import(Request $request)
+    {
+        $companies = $request->data;
+
+        foreach ($companies as $company) {
+            $company = Company::updateOrCreate(
+                [
+                    'id' => $company['id']
+                ],
+                [
+                    'name' => $company['name'],
+                    'email' => $company['email'],
+                    'phone' => $company['phone'],
+                    'address' => $company['address'],
+                    'created_at' => $company['created_at'],
+                    'updated_at' => $company['updated_at'],
+                ]
+            );
+        }
+    }
+
     public function edit(Request $request)
     {
         $where = array('id' => $request->id);

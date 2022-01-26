@@ -27,3 +27,4 @@ Route::post('store-company', [CrudController::class, 'store']);
 Route::post('edit-company', [CrudController::class, 'edit']);
 Route::post('delete-company', [CrudController::class, 'destroy']);
 Route::get('all-company', [CrudController::class, 'all']);
+Route::post('import-companies', [CrudController::class, 'import']);
