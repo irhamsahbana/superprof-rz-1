@@ -11,7 +11,8 @@ class CrudController extends Controller
 {
     public function index()
     {
-        $data = Company::orderBy('id', 'desc')->paginate();
+        $count = Company::count();
+        $data = Company::orderBy('id', 'desc')->paginate($count);
 
         return response()->json($data);
     }
