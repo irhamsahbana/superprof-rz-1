@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Company;
+use Illuminate\Support\Facades\Validator;
+
 // use Datatables;
 
 class CrudController extends Controller
@@ -12,26 +14,71 @@ class CrudController extends Controller
     public function index()
     {
         $count = Company::count();
-        $data = Company::orderBy('id', 'desc')->paginate($count);
+        $data = Company::orderBy('id', 'desc')->paginate($count)->toArray();
+
+        $no = count($data['data']);
+        $i = $no;
+
+        foreach ($data['data'] as $index => $value) {
+            $data['data'][$index]['no'] = ($no - $i--) + 1;
+        }
 
         return response()->json($data);
     }
 
     public function all()
     {
-        $data = Company::orderBy('id', 'desc')->get();
+        $data = Company::orderBy('id', 'desc')->get()->toArray();
+
+        $no = count($data);
+        $i = $no;
+
+        $number = [];
+
+        foreach ($data as $index => $value) {
+            $data[$index]['no'] = ($no - $i--) + 1;
+        }
 
         return response()->json($data);
     }
 
     public function store(Request $request)
     {
+        $field = [
+            'id' => $request->id,
+            'name' => $request->name,
+            'address' => $request->address,
+            'phone' => $request->phone,
+            'email' => $request->email,
+        ];
 
-        $companyId = $request->id;
+        $rules = [
+            'id' => 'nullable',
+            'name' => 'required',
+            'address' => 'required',
+            'phone' => 'required|unique:companies,phone,' .$request->id,
+            'email' => 'required|email|unique:companies,email,' .$request->id,
+        ];
+
+        $messages = [
+            'id.required' => 'ID tidak boleh kosong',
+            'name.required' => 'Nama tidak boleh kosong',
+            'address.required' => 'Alamat tidak boleh kosong',
+            'phone.required' => 'Nomor Telepon tidak boleh kosong',
+            'phone.unique' => 'Nomor Telepon sudah terdaftar',
+            'email.required' => 'Email tidak boleh kosong',
+            'email.email' => 'Email tidak valid',
+            'email.unique' => 'Email sudah terdaftar',
+        ];
+
+        $validator = Validator::make($field, $rules, $messages);
+
+        if ($validator->fails())
+            return response()->json(['errors' => $validator->errors()]);
 
         $company   = Company::updateOrCreate(
             [
-                'id' => $companyId
+                'id' => $ $request->id
             ],
             [
                 'name' => $request->name,
