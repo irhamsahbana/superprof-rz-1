@@ -78,7 +78,7 @@ class CrudController extends Controller
 
         $company   = Company::updateOrCreate(
             [
-                'id' => $ $request->id
+                'id' => $request->id
             ],
             [
                 'name' => $request->name,
@@ -94,6 +94,29 @@ class CrudController extends Controller
     public function import(Request $request)
     {
         $companies = $request->data;
+
+        $fields = [
+            'companies' => $companies,
+        ];
+
+        $rules = [
+            'companies.*.name' => 'required',
+            'companies.*.address' => 'required',
+        ];
+
+        $messages = [];
+
+        foreach ($companies as $index => $val) {
+            $row = $index + 1;
+
+            $messages[sprintf('companies.%s.name.required', $index)] = sprintf('Nama pada excel baris ke %s wajib diisi.', $row);
+            $messages[sprintf('companies.%s.email.required', $index)] = sprintf('Email pada excel baris ke %s tidak valid.', $row);
+        }
+
+        $validator = Validator::make($fields, $rules, $messages);
+
+        if ($validator->fails())
+            return response()->json(['errors' => $validator->errors()]);
 
         foreach ($companies as $company) {
             $company = Company::updateOrCreate(
