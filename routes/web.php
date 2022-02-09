@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CrudController;
+use App\Http\Controllers\WebController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,8 +14,15 @@ use App\Http\Controllers\CrudController;
 |
 */
 
-Route::get('/', [CrudController::class, 'index']);
-Route::get('crud', [CrudController::class, 'index']);
-Route::post('store-company', [CrudController::class, 'store']);
-Route::post('edit-company', [CrudController::class, 'edit']);
-Route::post('delete-company', [CrudController::class, 'destroy']);
+Route::get('/', [WebController::class, 'index']);
+Route::get('crud', [WebController::class, 'index']);
+Route::get('list', [WebController::class, 'list']);
+Route::post('store-company', [WebController::class, 'store']);
+Route::post('edit-company', [WebController::class, 'edit']);
+Route::post('delete-company', [WebController::class, 'destroy']);
+Route::get('companies/export/', [WebController::class, 'export']);
+
+Route::post('dropzone/upload', [WebController::class, 'import'])->name('dropzone.upload');
+Route::get('dropzone/fetch', [WebController::class, 'fetch'])->name('dropzone.fetch');
+Route::get('dropzone/delete', [WebController::class, 'delete'])->name('dropzone.delete');
+
